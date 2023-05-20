@@ -1,7 +1,7 @@
 import { createElement } from '../render.js';
 import { getDateAndTime } from '../utils.js';
 
-const createPointEditTemplate = (point) => {
+const createPointEditTemplate = (_point) => {
 
   const generatePictures = (pictures) => {
     let result = '';
@@ -15,7 +15,7 @@ const createPointEditTemplate = (point) => {
     let result = '';
     offers.forEach((offer) => {
       result = `${result}<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+            <input class="event__offer-checkbox visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
             <label class="event__offer-label" for="event-offer-luggage-1">
               <span class="event__offer-title">${offer['title']}</span>
               &plus;&euro;&nbsp;
@@ -32,7 +32,7 @@ const createPointEditTemplate = (point) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="img/icons/${point['type']}.png" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${_point['type']}.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
         <div class="event__type-list">
@@ -79,9 +79,9 @@ const createPointEditTemplate = (point) => {
       </div>
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${point['type']}
+          ${_point['type']}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point['destination']['name']}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${_point['destination']['name']}" list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -90,17 +90,17 @@ const createPointEditTemplate = (point) => {
       </div>
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateAndTime(point['dateFrom'])}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateAndTime(_point['dateFrom'])}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateAndTime(point['dateTo'])}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateAndTime(_point['dateTo'])}">
       </div>
       <div class="event__field-group  event__field-group--price">
         <label class="event__label" for="event-price-1">
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point['basePrice']}">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${_point['basePrice']}">
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
@@ -112,15 +112,15 @@ const createPointEditTemplate = (point) => {
       <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
-              ${generateOffer(point['offers'])}
+              ${generateOffer(_point['offers'])}
         </div>
       </section>
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${point['destination']['description']}</p>
+        <p class="event__destination-description">${_point['destination']['description']}</p>
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${generatePictures(point['destination']['pictures'])}
+            ${generatePictures(_point['destination']['pictures'])}
           </div>
         </div>
       </section>
@@ -131,22 +131,22 @@ const createPointEditTemplate = (point) => {
 
 export default class PointEdit {
   constructor(point) {
-    this.point = point;
+    this._point = point;
   }
 
-  getTemplate() {
-    return createPointEditTemplate(this.point);
+  get template() {
+    return createPointEditTemplate(this._point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this.template);
     }
 
-    return this.element;
+    return this._element;
   }
 
   removeElement() {
-    this.element = null;
+    this._element = null;
   }
 }

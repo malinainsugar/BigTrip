@@ -1,4 +1,4 @@
-import { render, RenderPosition} from '../render';
+import { render } from '../render';
 import Point from '../view/point';
 import PointEdit from '../view/point-edit';
 import PointNew from '../view/point-new';
@@ -6,21 +6,25 @@ import Sort from '../view/sort';
 import TripList from '../view/trip-list';
 
 class Trip {
-  constructor({container}) {
+  constructor() {
     this.component = new TripList();
-    this.container = container;
   }
 
-  init() {
-    render(new Sort(), this.container, RenderPosition.BEFOREEND);
-    render(this.component, this.container);
-    render(new PointNew(), this.component.getElement(), RenderPosition.BEFOREEND);
-    render(new PointEdit(), this.component.getElement(), RenderPosition.BEFOREEND);
+  init(container, pointsModel) {
+    this.container = container;
+    this.pointsModel = pointsModel;
+    this.listPoints = this.pointsModel.getPoints();
 
-    for (let i = 0; i < 3; i++) {
-      render(new Point(), this.component.getElement(), RenderPosition.BEFOREEND);
+    render(new Sort(), this.container);
+    render(this.component, this.container);
+    render(new PointNew(), this.component.getElement());
+    render(new PointEdit(this.listPoints[0]), this.component.getElement());
+
+    for (let i = 0; i < this.listPoints.length; i++) {
+      render(new Point(this.listPoints[i]), this.component.getElement());
     }
   }
 }
 
 export default Trip;
+

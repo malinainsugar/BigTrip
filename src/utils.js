@@ -1,10 +1,9 @@
-const getRandomInt = (min = 0, max = 1) => {
-  const lower = Math.ceil(Math.min(min, max));
-  const upper = Math.floor(Math.max(min, max));
+import dayjs from 'dayjs';
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
 const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)];
 
-export {getRandomArrayElement, getRandomInt};
+const getDateAndTime = (date) => dayjs(date).format('DD/MM/YY hh:mm');
+
+export {getRandomArrayElement, getRandomInt, getDateAndTime};

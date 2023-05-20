@@ -3,6 +3,7 @@ import Point from '../view/point';
 import PointEdit from '../view/point-edit';
 import Sort from '../view/sort';
 import TripList from '../view/trip-list';
+import EmptyList from '../view/empty-list';
 
 class Trip {
   constructor() {
@@ -13,6 +14,10 @@ class Trip {
     this._container = container;
     this._pointsModel = pointsModel;
     this._listPoints = this._pointsModel.points;
+
+    if (this._listPoints.length === 0) {
+      return render(new EmptyList(), this._container);
+    }
 
     render(new Sort(), this._container);
     render(this._component, this._container);

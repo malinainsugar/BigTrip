@@ -1,6 +1,6 @@
 import {createElement} from '../render';
 
-const createFiltersTemplate = () => (
+const createSortTemplate = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
       <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day">
@@ -30,20 +30,20 @@ const createFiltersTemplate = () => (
 );
 
 class Sort {
-  getTemplate() {
-    return createFiltersTemplate();
+  get template() {
+    return createSortTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this.template);
     }
 
-    return this.element;
+    return this._element;
   }
 
   removeElement() {
-    this.element = null;
+    this._element = null;
   }
 }
 

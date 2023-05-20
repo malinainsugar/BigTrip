@@ -1,28 +1,66 @@
 import { render } from '../render';
 import Point from '../view/point';
 import PointEdit from '../view/point-edit';
-import PointNew from '../view/point-new';
 import Sort from '../view/sort';
 import TripList from '../view/trip-list';
 
 class Trip {
   constructor() {
-    this.component = new TripList();
+    this._component = new TripList();
   }
 
   init(container, pointsModel) {
-    this.container = container;
-    this.pointsModel = pointsModel;
-    this.listPoints = this.pointsModel.getPoints();
+    this._container = container;
+    this._pointsModel = pointsModel;
+    this._listPoints = this._pointsModel.points;
 
-    render(new Sort(), this.container);
-    render(this.component, this.container);
-    render(new PointNew(), this.component.getElement());
-    render(new PointEdit(this.listPoints[0]), this.component.getElement());
+    render(new Sort(), this._container);
+    render(this._component, this._container);
 
-    for (let i = 0; i < this.listPoints.length; i++) {
-      render(new Point(this.listPoints[i]), this.component.getElement());
+    for (let i = 0; i < this._listPoints.length; i++) {
+      this._renderPoint(this._listPoints[i]);
     }
+  }
+
+  _renderPoint (point) {
+    const pointComponent = new Point(point);
+    const pointEditComponent = new PointEdit(point);
+
+    const replaceFormToPoint = () => {
+      this._component.element.replaceChild(pointComponent.element, pointEditComponent.element);
+    };
+
+    const replacePointToForm = () => {
+      this._component.element.replaceChild(pointEditComponent.element, pointComponent.element);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    const onSaveButtonClick = (evt) => {
+      evt.preventDefault();
+      replaceFormToPoint();
+      pointEditComponent.element.removeEventListener('submit', onSaveButtonClick);
+    };
+
+    const onRollupButtonClick = () => {
+      replaceFormToPoint();
+      pointEditComponent.element.removeEventListener('click', onRollupButtonClick);
+    };
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replacePointToForm();
+      document.addEventListener('keydown', onEscKeyDown);
+      pointEditComponent.element.querySelector('form').addEventListener('submit', onSaveButtonClick);
+      pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', onRollupButtonClick);
+    });
+
+    return render(pointComponent, this._component.element);
   }
 }
 

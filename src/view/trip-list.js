@@ -1,25 +1,25 @@
 import {createElement} from '../render';
 
-const createFiltersTemplate = () => (
+const createTripListTemplate = () => (
   `<ul class="trip-events__list">
   </ul>`
 );
 
 class TripList {
-  getTemplate() {
-    return createFiltersTemplate();
+  get template() {
+    return createTripListTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this.template);
     }
 
-    return this.element;
+    return this._element;
   }
 
   removeElement() {
-    this.element = null;
+    this._element = null;
   }
 }
 

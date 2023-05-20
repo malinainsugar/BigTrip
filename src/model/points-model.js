@@ -1,12 +1,15 @@
-import { generatePoint } from '../mock/point';
+import { generatePoint, generateDestination, generateOffersByType } from '../mock/point';
+
 
 export default class PointsModel {
   constructor() {
-    this.points = Array.from({length: 10}, generatePoint);
+    this._points = Array.from({length: 10}, generatePoint);
+    this._offers = generateOffersByType;
+    this._destinations = generateDestination;
   }
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this._points;
   }
 }
 

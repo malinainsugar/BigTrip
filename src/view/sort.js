@@ -29,7 +29,7 @@ const createSortTemplate = () => (
   </form>`
 );
 
-class Sort {
+export default class Sort {
   get template() {
     return createSortTemplate();
   }
@@ -47,4 +47,3 @@ class Sort {
   }
 }
 
-export default Sort;

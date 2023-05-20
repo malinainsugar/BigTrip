@@ -21,7 +21,7 @@ const createFiltersTemplate = () => (
   </form>`
 );
 
-class Filter {
+export default class Filter {
   get template() {
     return createFiltersTemplate();
   }
@@ -39,4 +39,3 @@ class Filter {
   }
 }
 
-export default Filter;

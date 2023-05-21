@@ -1,4 +1,4 @@
-import { render } from '../render';
+import { render, replace } from '../framework/render.js';
 import Point from '../view/point';
 import PointEdit from '../view/point-edit';
 import Sort from '../view/sort';
@@ -7,7 +7,7 @@ import EmptyList from '../view/empty-list';
 
 class Trip {
   constructor() {
-    this._component = new TripList();
+    this._tripListComponent = new TripList();
   }
 
   init(container, pointsModel) {
@@ -20,7 +20,7 @@ class Trip {
     }
 
     render(new Sort(), this._container);
-    render(this._component, this._container);
+    render(this._tripListComponent, this._container);
 
     for (let i = 0; i < this._listPoints.length; i++) {
       this._renderPoint(this._listPoints[i]);
@@ -32,11 +32,11 @@ class Trip {
     const pointEditComponent = new PointEdit(point);
 
     const replaceFormToPoint = () => {
-      this._component.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     };
 
     const replacePointToForm = () => {
-      this._component.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -47,25 +47,22 @@ class Trip {
       }
     };
 
-    const onSaveButtonClick = (evt) => {
-      evt.preventDefault();
-      replaceFormToPoint();
-      pointEditComponent.element.removeEventListener('submit', onSaveButtonClick);
-    };
-
-    const onRollupButtonClick = () => {
-      replaceFormToPoint();
-      pointEditComponent.element.removeEventListener('click', onRollupButtonClick);
-    };
-
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setEditClickHandler(() => {
       replacePointToForm();
       document.addEventListener('keydown', onEscKeyDown);
-      pointEditComponent.element.querySelector('form').addEventListener('submit', onSaveButtonClick);
-      pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', onRollupButtonClick);
     });
 
-    return render(pointComponent, this._component.element);
+    pointEditComponent.setFormSubmitHandler(() => {
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    pointEditComponent.setButtonClickHandler(() => {
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    return render(pointComponent, this._tripListComponent.element);
   }
 }
 

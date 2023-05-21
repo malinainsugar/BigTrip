@@ -4,8 +4,9 @@ import PointEdit from '../view/point-edit';
 import Sort from '../view/sort';
 import TripList from '../view/trip-list';
 import EmptyList from '../view/empty-list';
+import { generateSorting } from '../mock/processing.js';
 
-class Trip {
+export default class Trip {
   constructor() {
     this._tripListComponent = new TripList();
   }
@@ -17,13 +18,14 @@ class Trip {
 
     if (this._listPoints.length === 0) {
       return render(new EmptyList(), this._container);
-    }
+    } else {
+      const sorting = generateSorting(this._pointsModel.points);
+      render(new Sort(sorting), this._container);
+      render(this._tripListComponent, this._container);
 
-    render(new Sort(), this._container);
-    render(this._tripListComponent, this._container);
-
-    for (let i = 0; i < this._listPoints.length; i++) {
-      this._renderPoint(this._listPoints[i]);
+      for (let i = 0; i < this._listPoints.length; i++) {
+        this._renderPoint(this._listPoints[i]);
+      }
     }
   }
 
@@ -65,6 +67,4 @@ class Trip {
     return render(pointComponent, this._tripListComponent.element);
   }
 }
-
-export default Trip;
 

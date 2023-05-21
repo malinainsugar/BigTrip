@@ -1,4 +1,4 @@
-import { getRandomInt, getRandomArrayElement } from '../utils';
+import { getRandomInt, getRandomArrayElement, createRandomDates } from '../utils';
 import { createIDForDestination, createIDForOffer, createIDForPoint } from './counters';
 import { DESTINATION_NAMES, OFFER_TITLES, TYPES_POINT, DESCRIPTIONS } from '../const';
 
@@ -33,16 +33,20 @@ const generateOffersByType = () => {
   return arrayOffersByType;
 };
 
-const generatePoint = () => ({
-  'basePrice': getRandomInt(1, 1500),
-  'dateFrom': `2019-07-10T${getRandomInt(10,23)}:${getRandomInt(10,59)}:00.845Z`,
-  'dateTo': `2019-07-11T${getRandomInt(10,23)}:${getRandomInt(10,59)}:00.375Z`,
-  'id' : createIDForPoint(),
-  'destination': generateDestination(),
-  'isFavorite': getRandomInt(1, 2) === 1,
-  'offers':  Array.from({ length: getRandomInt(2,5) }, generateOffer),
-  'type': getRandomArrayElement(TYPES_POINT)
-});
+
+const generatePoint = () => {
+  const randomDate = createRandomDates();
+  return {
+    'basePrice': getRandomInt(1, 1500),
+    'dateFrom': randomDate.dateFrom,
+    'dateTo': randomDate.dateTo,
+    'id' : createIDForPoint(),
+    'destination': generateDestination(),
+    'isFavorite': getRandomInt(1, 2) === 1,
+    'offers':  Array.from({ length: getRandomInt(2,5) }, generateOffer),
+    'type': getRandomArrayElement(TYPES_POINT)
+  };
+};
 
 export { generatePoint, generateDestination, generateOffersByType };
 

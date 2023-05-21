@@ -1,29 +1,35 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFiltersTemplate = () => (
-  `<form class="trip-filters" action="#" method="get">
-    <div class="trip-filters__filter">
-      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
-      <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-    </div>
+const createFilterItemTemplate = (filter, isChecked) => {
+  const {name, count} = filter;
 
-    <div class="trip-filters__filter">
-      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-      <label class="trip-filters__filter-label" for="filter-future">Future</label>
-    </div>
+  return (
+    `<div class="trip-filters__filter">
+    <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" ${isChecked ? 'checked' : ''} value="${name}" ${count === 0 ? 'disabled' : ''}>
+    <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>
+  </div>`
+  );
+};
 
-    <div class="trip-filters__filter">
-      <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
-      <label class="trip-filters__filter-label" for="filter-past">Past</label>
-    </div>
+const createFiltersTemplate = (filterItems) => {
+  const filterItemsTemplate = filterItems
+    .map((filter, index) => createFilterItemTemplate(filter, index === 0))
+    .join('');
 
+  return `<form class="trip-filters" action="#" method="get">
+    ${filterItemsTemplate}
     <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`
-);
+    </form>`;
+};
 
 export default class Filter extends AbstractView {
+  constructor(filters) {
+    super();
+    this._filters = filters;
+  }
+
   get template() {
-    return createFiltersTemplate();
+    return createFiltersTemplate(this._filters);
   }
 }
 

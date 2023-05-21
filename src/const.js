@@ -29,5 +29,19 @@ const OFFER_TITLES = [
   'Upgrade to a business class'
 ];
 
-export {TYPES_POINT, DESTINATION_NAMES, DESCRIPTIONS, OFFER_TITLES};
+const FILTER_TYPE = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past'
+};
+
+const SORT_TYPE = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+export {TYPES_POINT, DESTINATION_NAMES, DESCRIPTIONS, OFFER_TITLES, FILTER_TYPE, SORT_TYPE};
 

@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 const createPointTemplate = (point) => {
@@ -44,8 +44,9 @@ const createPointTemplate = (point) => {
   </li>`;
 };
 
-export default class Point {
+export default class Point extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
   }
 
@@ -53,16 +54,14 @@ export default class Point {
     return createPointTemplate(this._point);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this.template);
-    }
-
-    return this._element;
+  setEditClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.addEventListener('click', this._editClickHandler);
   }
 
-  removeElement() {
-    this._element = null;
+  _editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
   }
 }
 

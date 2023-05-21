@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { getDateAndTime } from '../utils.js';
 
 const createPointEditTemplate = (_point) => {
@@ -129,8 +129,9 @@ const createPointEditTemplate = (_point) => {
 </li>`;
 };
 
-export default class PointEdit {
+export default class PointEdit extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
   }
 
@@ -138,15 +139,23 @@ export default class PointEdit {
     return createPointEditTemplate(this._point);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this.template);
-    }
-
-    return this._element;
+  setFormSubmitHandler = (callback) => {
+    this._callback.submit = callback;
+    this.element.querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 
-  removeElement() {
-    this._element = null;
+  _formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.submit();
+  }
+
+  setButtonClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this._buttonClickHandler);
+  }
+
+  _buttonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
   }
 }

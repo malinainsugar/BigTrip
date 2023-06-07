@@ -28,4 +28,12 @@ const createRandomDates = () => {
   };
 };
 
-export {getRandomArrayElement, getRandomInt, getDateAndTime, createRandomDates, updateItem};
+const getDifference = (oneDate, secondDate) => dayjs(secondDate).diff(oneDate);
+
+const sortByDay = (points) => points.sort((pointA, pointB) => getDifference(pointB.dateFrom, pointA.dateFrom));
+
+const sortByTime = (points) => points.sort((pointA, pointB) => getDifference(pointA.dateFrom, pointA.dateTo) - getDifference(pointB.dateFrom, pointB.dateTo, 'second'));
+
+const sortByPrice = (points) => points.sort((pointA, pointB) => pointA.basePrice - pointB.basePrice);
+
+export {getRandomArrayElement, getRandomInt, getDateAndTime, createRandomDates, updateItem, sortByDay, sortByTime, sortByPrice};

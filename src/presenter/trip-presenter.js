@@ -1,11 +1,11 @@
 import { render } from '../framework/render.js';
-import { generateSorting } from '../mock/processing.js';
-import { updateItem } from '../utils';
+import { updateItem, sortByDay, sortByTime, sortByPrice } from '../utils';
 import Point from '../view/point.js';
 import Sort from '../view/sort.js';
 import TripList from '../view/trip-list.js';
 import EmptyList from '../view/empty-list.js';
 import PointPresenter from './point-presenter';
+import { SORT_TYPE } from '../const';
 
 
 export default class TripPresenter {
@@ -14,15 +14,19 @@ export default class TripPresenter {
     this._container = container;
     this._pointsModel = pointsModel;
     this._pointPresenter = new Map();
+    this._sortComponent = new Sort();
+    this._currentSortType = SORT_TYPE.PRICE;
   }
 
   init() {
-    this._listPoints = [...this._pointsModel.points];
+    this._listPoints = sortByPrice(this._pointsModel.points);
     this._renderTrip();
+    this._sourcedListPoints = [...this._listPoints];
   }
 
   _handlePointChange = (updatedPoint) => {
     this._listPoints = updateItem(this._listPoints, updatedPoint);
+    this._sourcedListPoints = updateItem(this._sourcedListPoints, updatedPoint);
     this._pointPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
@@ -30,9 +34,33 @@ export default class TripPresenter {
 
   _renderFirstMessage = () => render(new EmptyList(), this._container);
 
+  _sortPoints = (sortType) => {
+    switch (sortType) {
+      case SORT_TYPE.DAY:
+        this._listPoints = sortByDay(this._listPoints);
+        break;
+      case SORT_TYPE.TIME:
+        this._listPoints = sortByTime(this._listPoints);
+        break;
+      default:
+        this._listPoints = sortByPrice(this._listPoints);
+    }
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange = (sortType) => {
+    if (sortType === this._currentSortType){
+      return;
+    }
+
+    this._sortPoints(sortType);
+    this._clearPointList();
+    this._renderPoints();
+  }
+
   _renderSort = () => {
-    const sorting = generateSorting(this._pointsModel.points);
-    render(new Sort(sorting), this._container);
+    render(this._sortComponent, this._container);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderNewPoint = () => render(new Point(this._pointsModel.getOffers(), this._pointsModel.getDestination()), this._tripListComponent.element);

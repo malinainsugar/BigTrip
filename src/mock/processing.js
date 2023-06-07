@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { FILTER_TYPE, SORT_TYPE } from '../const';
 import dayjs from 'dayjs';
 
@@ -15,9 +14,11 @@ const getDifference = (oneDate, secondDate, param) => dayjs(secondDate).diff(one
 
 const sorting = {
   [SORT_TYPE.DAY]: (points) => points.sort((prev,next) => getDifference(next.dateFrom, prev.dateFrom, '')),
+  // eslint-disable-next-line no-unused-vars
   [SORT_TYPE.EVENT]: (points) => null,
   [SORT_TYPE.TIME]: (points) => points.sort((prev, next) => getDifference(prev.dateFrom, prev.dateTo, 'minute') - getDifference(next.dateFrom, next.dateTo, 'minute')),
   [SORT_TYPE.PRICE]: (points) => points.sort((prev, next) => prev.basePrice - next.basePrice),
+  // eslint-disable-next-line no-unused-vars
   [SORT_TYPE.OFFERS]: (points) => null
 };
 

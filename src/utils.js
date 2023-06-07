@@ -6,6 +6,8 @@ const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)
 
 const getDateAndTime = (date) => dayjs(date).format('DD/MM/YY hh:mm');
 
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
 const getRandomDate = () => dayjs()
   .add(getRandomInt(-7, 7), 'day')
   .add(getRandomInt(1, 23), 'hour')
@@ -26,4 +28,4 @@ const createRandomDates = () => {
   };
 };
 
-export {getRandomArrayElement, getRandomInt, getDateAndTime, createRandomDates};
+export {getRandomArrayElement, getRandomInt, getDateAndTime, createRandomDates, updateItem};

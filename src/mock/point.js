@@ -1,6 +1,6 @@
 import { getRandomInt, getRandomArrayElement, createRandomDates } from '../utils';
-import { createIDForDestination, createIDForOffer, createIDForPoint } from './counters';
 import { DESTINATION_NAMES, OFFER_TITLES, TYPES_POINT, DESCRIPTIONS } from '../const';
+import { nanoid } from 'nanoid';
 
 const generatePhoto = () => ({
   'src': `http://picsum.photos/248/152?r=${getRandomInt(0, 10)}`,
@@ -8,14 +8,14 @@ const generatePhoto = () => ({
 });
 
 const generateDestination = () => ({
-  'id': createIDForDestination(),
+  'id': nanoid(),
   'description': getRandomArrayElement(DESCRIPTIONS),
   'name': getRandomArrayElement(DESTINATION_NAMES),
   'pictures': Array.from({length: getRandomInt(1,6)}, generatePhoto)
 });
 
 const generateOffer = () => ({
-  'id': createIDForOffer(),
+  'id': nanoid(),
   'title': getRandomArrayElement(OFFER_TITLES),
   'price': getRandomInt(1, 200)
 });
@@ -40,7 +40,7 @@ const generatePoint = () => {
     'basePrice': getRandomInt(1, 1500),
     'dateFrom': randomDate.dateFrom,
     'dateTo': randomDate.dateTo,
-    'id' : createIDForPoint(),
+    'id' : nanoid(),
     'destination': generateDestination(),
     'isFavorite': getRandomInt(1, 2) === 1,
     'offers':  Array.from({ length: getRandomInt(2,5) }, generateOffer),

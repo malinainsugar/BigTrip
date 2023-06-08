@@ -1,20 +1,20 @@
 import { render } from '../framework/render.js';
 import { updateItem, sortByDay, sortByTime, sortByPrice } from '../utils';
-import Point from '../view/point.js';
-import Sort from '../view/sort.js';
-import TripList from '../view/trip-list.js';
-import EmptyList from '../view/empty-list.js';
+import PointView  from '../view/point-view.js';
+import SortView  from '../view/sort-view.js';
+import TripListView  from '../view/trip-list-view.js';
+import EmptyListView  from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter';
 import { SORT_TYPE } from '../const';
 
 
 export default class TripPresenter {
-  constructor(container, pointsModel) {
-    this._tripListComponent = new TripList();
-    this._container = container;
+  constructor(tripContainer, pointsModel) {
+    this._tripListComponent = new TripListView();
+    this._tripContainer = tripContainer;
     this._pointsModel = pointsModel;
     this._pointPresenter = new Map();
-    this._sortComponent = new Sort();
+    this._sortComponent = new SortView();
     this._currentSortType = SORT_TYPE.PRICE;
   }
 
@@ -32,7 +32,7 @@ export default class TripPresenter {
 
   _handleModeChange = () => this._pointPresenter.forEach((presenter) => presenter.resetView());
 
-  _renderFirstMessage = () => render(new EmptyList(), this._container);
+  _renderFirstMessage = () => render(new EmptyListView(), this._tripContainer);
 
   _sortPoints = (sortType) => {
     switch (sortType) {
@@ -59,16 +59,16 @@ export default class TripPresenter {
   }
 
   _renderSort = () => {
-    render(this._sortComponent, this._container);
+    render(this._sortComponent, this._tripContainer);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _renderNewPoint = () => render(new Point(this._pointsModel.getOffers(), this._pointsModel.getDestination()), this._tripListComponent.element);
+  _renderNewPoint = () => render(new PointView(this._pointsModel.getOffers(), this._pointsModel.getDestination()), this._tripListComponent.element);
 
   _renderPoints = () => this._listPoints.forEach((point) => this._renderPoint(point));
 
   _renderTripList = () => {
-    render(this._tripListComponent, this._container);
+    render(this._tripListComponent, this._tripContainer);
     this._renderPoints();
   }
 

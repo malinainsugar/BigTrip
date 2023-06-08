@@ -1,6 +1,6 @@
 import { render, replace, remove } from '../framework/render';
-import Point from '../view/point';
-import PointEdit from '../view/point-edit';
+import PointView  from '../view/point-view';
+import PointEditView  from '../view/point-edit-view';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -14,19 +14,20 @@ export default class PointPresenter {
     this._changeData = changeData;
     this._handleModeChange = modeChange;
     this._mode = Mode.DEFAULT;
-    this._point = null;
     this._pointComponent = null;
     this._pointEditComponent = null;
   }
 
   init = (point) => {
     this._point = point;
+    this._destinations = [...this._pointsModel.destinations];
+    this._offers = [...this._pointsModel.offers];
 
-    const prevPointComponent = this._pointComponent;
-    const prevPointEditComponent = this._pointEditComponent;
+    const previousPointComponent = this._pointComponent;
+    const previousPointEditComponent = this._pointEditComponent;
 
-    this._pointComponent = new Point(this._point);
-    this._pointEditComponent = new PointEdit(this._point);
+    this._pointComponent = new PointView (this._point, this._destinations, this._offers);
+    this._pointEditComponent = new PointEditView (this._point, this._destinations, this._offers);
 
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
@@ -34,23 +35,23 @@ export default class PointPresenter {
 
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmitClick);
 
-    this._pointEditComponent.setButtonClickHandler(this._handleButtonlick);
+    this._pointEditComponent.setCloseClickHandler(this._handleCloseClick);
 
-    if (prevPointComponent === null || prevPointEditComponent === null) {
+    if (previousPointComponent === null || previousPointEditComponent === null) {
       render(this._pointComponent, this._tripListComponent);
       return;
     }
 
     if (this._mode === Mode.DEFAULT) {
-      replace(this._pointComponent, prevPointComponent);
+      replace(this._pointComponent, previousPointComponent);
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._pointEditComponent, prevPointEditComponent);
+      replace(this._pointEditComponent, previousPointEditComponent);
     }
 
-    remove(prevPointComponent);
-    remove(prevPointEditComponent);
+    remove(previousPointComponent);
+    remove(previousPointEditComponent);
   }
 
   destroy = () => {
@@ -60,6 +61,7 @@ export default class PointPresenter {
 
   resetView = () => {
     if (this._mode !== Mode.DEFAULT) {
+      this._pointEditComponent.reset(this._point);
       this._replaceFormToPoint();
     }
   }
@@ -78,6 +80,7 @@ export default class PointPresenter {
   _onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this._pointEditComponent.reset(this._point);
       this._replaceFormToPoint();
       document.removeEventListener('keydown', this._onEscKeyDown);
     }
@@ -96,7 +99,8 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this._onEscKeyDown);
   }
 
-  _handleButtonlick = () => {
+  _handleCloseClick = () => {
+    this._pointEditComponent.reset(this._point);
     this._replaceFormToPoint();
     document.removeEventListener('keydown', this._onEscKeyDown);
   }

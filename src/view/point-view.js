@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
 
 const renderOffers = (offers, checkedOffers) => {
@@ -24,7 +25,7 @@ const createPointTemplate = (point, destinations, offers) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event ${type} icon">
       </div>
-      <h3 class="event__title">${point.type} ${destinations[destinationId].name}</h3>
+      <h3 class="event__title">${type} ${he.encode(destinations[destinationId].name)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${(getDate(dateTo) === (getDate(dateFrom)) ? getTime(dateFrom) : getDate(dateFrom))}</time>
@@ -56,33 +57,38 @@ const createPointTemplate = (point, destinations, offers) => {
 };
 
 export default class PointView extends AbstractView {
+
+  #point = null;
+  #destinations = null;
+  #offers = null;
+
   constructor(point, destinations, offers) {
     super();
-    this._point = point;
-    this._destinations = destinations;
-    this._offers = offers;
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
   get template() {
-    return createPointTemplate(this._point, this._destinations, this._offers);
+    return createPointTemplate(this.#point, this.#destinations, this.#offers);
   }
 
   setEditClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   setFavoriteClickHandler = (callback) => {
     this._callback.favoriteClick = callback;
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this._favoriteClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
-  _editClickHandler = (evt) => {
+  #editClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.click();
   }
 
-  _favoriteClickHandler = (evt) => {
+  #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
   }

@@ -34,6 +34,7 @@ export default class AbstractStatefulView extends AbstractView {
    * @param {Object} update Объект с обновлённой частью состояния
    */
   _setState(update) {
+    // eslint-disable-next-line no-undef
     this._state = structuredClone({...this._state, ...update});
   }
 

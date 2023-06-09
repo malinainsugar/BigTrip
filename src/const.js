@@ -29,13 +29,13 @@ const OFFER_TITLES = [
   'Upgrade to a business class'
 ];
 
-const FILTER_TYPE = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PAST: 'past'
+const FilterType = {
+  EVERYTHING: 'EVERYTHING',
+  FUTURE: 'FUTURE',
+  PAST: 'PAST'
 };
 
-const SORT_TYPE = {
+const SortType = {
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
@@ -43,5 +43,23 @@ const SORT_TYPE = {
   OFFERS: 'offers'
 };
 
-export {TYPES_POINT, DESTINATION_NAMES, DESCRIPTIONS, OFFER_TITLES, FILTER_TYPE, SORT_TYPE};
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const EmptyListTextType = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.FUTURE]: 'There are no future events now',
+};
+
+export {TYPES_POINT, DESTINATION_NAMES, DESCRIPTIONS, OFFER_TITLES, FilterType, SortType, UserAction, UpdateType, EmptyListTextType};
 

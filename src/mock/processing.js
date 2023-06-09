@@ -1,21 +1,29 @@
-import { FILTER_TYPE } from '../const';
+import { FilterType, SortType } from '../const';
 import dayjs from 'dayjs';
 
-const isPast = (pointDate) => dayjs(pointDate.dateFrom).isBefore(dayjs());
-const isFuture = (pointDate) => dayjs(pointDate.dateTo).isAfter(dayjs());
+const isPast = (point) => dayjs().diff(point.dateTo, 'minute') > 0;
+const isFuture = (point) => dayjs().diff(point.dateFrom, 'minute') <= 0;
 
-const filters = {
-  [FILTER_TYPE.EVERYTHING]: (points) => points,
-  [FILTER_TYPE.FUTURE]: (points) => points.filter((point) => isFuture(point)),
-  [FILTER_TYPE.PAST]: (points) => points.filter((point) => isPast(point))
+const filtrate = {
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isFuture(point)),
+  [FilterType.PAST]: (points) => points.filter((point) => isPast(point))
 };
 
-const generateFilter = (points) => Object.entries(filters).map(
+const generateFilter = (points) => Object.entries(filtrate).map(
   ([filterName, filterPoints]) => ({
     name: filterName,
     count: filterPoints(points).length,
   }),
 );
 
-export { generateFilter };
+const getDifference = (oneDate, secondDate) => dayjs(secondDate).diff(oneDate);
+
+const sorting = {
+  [SortType.DAY]: (points) => points.sort((pointA, pointB) => getDifference(pointB.dateFrom, pointA.dateFrom)),
+  [SortType.TIME]: (points) => points.sort((pointA, pointB) => getDifference(pointA.dateFrom, pointA.dateTo) - getDifference(pointB.dateFrom, pointB.dateTo, 'second')),
+  [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointA.basePrice - pointB.basePrice)
+};
+
+export { generateFilter, filtrate, sorting };
 

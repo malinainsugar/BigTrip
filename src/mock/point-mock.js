@@ -46,5 +46,5 @@ const generatePoint = () => {
 
 const getPoints = () => Array.from({ length: 10 }).map(() => generatePoint()).sort();
 
-export { getPoints, getDestinations, getOffersByType};
+export { getPoints, getDestinations, getOffersByType, generatePoint};
 

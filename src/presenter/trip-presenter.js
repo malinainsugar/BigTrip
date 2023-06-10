@@ -1,4 +1,4 @@
-import { render, remove } from '../framework/render.js';
+import { RenderPosition, render, remove } from '../framework/render.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const';
 import { filtrate, sorting } from '../processing.js';
 import SortView  from '../view/sort-view.js';
@@ -6,6 +6,7 @@ import TripListView  from '../view/trip-list-view.js';
 import EmptyListView  from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter';
 import PointNewPresenter from './point-new-presenter';
+import LoadingView from '../view/loading-view.js';
 
 
 export default class TripPresenter {
@@ -17,6 +18,9 @@ export default class TripPresenter {
   #pointNewPresenter = null;
   #pointsModel = null;
   #EmptyListComponent = null;
+
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
 
   #sortComponent = null;
   #currentSortType = SortType.DAY;
@@ -58,7 +62,16 @@ export default class TripPresenter {
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderTrip();
+        break;
     }
+  };
+
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#tripListComponent.element, RenderPosition.AFTERBEGIN);
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -113,6 +126,13 @@ export default class TripPresenter {
   };
 
   #renderTrip() {
+    this.#renderTripList();
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const points = this.points;
 
     if (points.length === 0) {
@@ -138,6 +158,7 @@ export default class TripPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#EmptyListComponent) {
       remove(this.#EmptyListComponent);

@@ -26,8 +26,8 @@ export default class PointPresenter {
   #destinations = null;
   #offers = null;
 
-  constructor ({tripList, pointsModel, dataChange, modeChange, destinationsModel, offersModel}) {
-    this.#tripListComponent = tripList;
+  constructor ({pointListContainer, pointsModel, dataChange, modeChange, destinationsModel, offersModel}) {
+    this.#tripListComponent = pointListContainer;
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;

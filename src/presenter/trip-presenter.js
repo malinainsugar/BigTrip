@@ -76,12 +76,6 @@ export default class TripPresenter {
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
         break;
-      case UpdateType.INIT:
-        this.#isLoading = false;
-        remove(this.#loadingComponent);
-        remove(this.#emptyListComponent);
-        this.#renderTrip();
-        break;
     }
   };
 
@@ -92,11 +86,17 @@ export default class TripPresenter {
         break;
       case UpdateType.MINOR:
         this.#clearTripList();
-        this.#renderTripList();
+        this.#renderTrip();
         break;
       case UpdateType.MAJOR:
         this.#clearTripList({resetSortType: true});
-        this.#renderTripList();
+        this.#renderTrip();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        remove(this.#emptyListComponent);
+        this.#renderTrip();
         break;
     }
   };
@@ -121,7 +121,7 @@ export default class TripPresenter {
 
     this.#currentSortType = sortType;
     this.#clearTripList();
-    this.#renderTripList();
+    this.#renderTrip();
   }
 
   #renderSort = () => {

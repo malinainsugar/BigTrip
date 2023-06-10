@@ -17,12 +17,12 @@ const renderOffers = (allOffers, checkedOffers) => {
   return result;
 };
 
-const createPointTemplate = (point, destinations, offers) => {
-  const { basePrice, type, destinationId, isFavorite, dateFrom, dateTo, offerIds } = point;
+const createPointTemplate = (point, destinations, allOffers) => {
+  const { basePrice, type, destination, isFavorite, dateFrom, dateTo, offers } = point;
   const getDate = (date) => dayjs(date).format('D MMMM');
   const getTime = (date) => dayjs(date).format('hh:mm');
-  const offersByType = offers.find((offer) => offer.type === type);
-  const destinationData = destinations.find((item) => item.id === destinationId);
+  const offersByType = allOffers.find((offer) => offer.type === type);
+  const destinationData = destinations.find((item) => item.id === destination);
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -45,7 +45,7 @@ const createPointTemplate = (point, destinations, offers) => {
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
         <li class="event__offer">
-          ${renderOffers(offersByType, offerIds)}
+          ${renderOffers(offersByType, offers)}
         </li>
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">

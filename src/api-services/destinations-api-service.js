@@ -1,9 +1,5 @@
 import ApiService from '../framework/api-service.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-};
+import { Method } from '../const.js';
 
 export default class DestinationsApiService extends ApiService {
   get destinations() {

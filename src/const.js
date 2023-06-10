@@ -62,5 +62,45 @@ const EmptyListTextType = {
   [FilterType.FUTURE]: 'There are no future events now',
 };
 
-export {TYPES_POINT, DESTINATION_NAMES, DESCRIPTIONS, OFFER_TITLES, FilterType, SortType, UserAction, UpdateType, EmptyListTextType};
+const SORT_TYPES_DISABLED = ['event', 'offer'];
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+const SortTypeDescription = {
+  [SortType.DAY]: 'Day',
+  [SortType.EVENT]: 'Event',
+  [SortType.TIME]: 'Time',
+  [SortType.PRICE]: 'Price',
+  [SortType.OFFER]: 'Offer',
+};
+
+const PointType = {
+  TAXI: 'taxi',
+  BUS: 'bus',
+  TRAIN: 'train',
+  SHIP: 'ship',
+  DRIVE: 'drive',
+  FLIGHT: 'flight',
+  CHECK_IN: 'check-in',
+  SIGHTSEEING: 'sightseeing',
+  RESTAURANT: 'restaurant'
+};
+
+const PointTypeDescription = {
+  [PointType.TAXI]: 'Taxi',
+  [PointType.BUS]: 'Bus',
+  [PointType.TRAIN]: 'Train',
+  [PointType.SHIP]: 'Ship',
+  [PointType.DRIVE]: 'Drive',
+  [PointType.FLIGHT]: 'Flight',
+  [PointType.CHECK_IN]: 'Check-in',
+  [PointType.SIGHTSEEING]: 'Sightseeing',
+  [PointType.RESTAURANT]: 'Restaurant'
+};
+
+export {TYPES_POINT, DESTINATION_NAMES, DESCRIPTIONS, OFFER_TITLES, FilterType, SortType, UserAction, UpdateType,
+  EmptyListTextType, SORT_TYPES_DISABLED, Method, SortTypeDescription, PointType, PointTypeDescription};
 

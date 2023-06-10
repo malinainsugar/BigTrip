@@ -4,7 +4,6 @@ import TripPresenter from './presenter/trip-presenter.js';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model.js';
 import NewPointButtonView from './view/new-point-button-view.js';
-import { getPoints, getOffersByType, getDestinations } from './mock/point-mock.js';
 import PointsApiService from './api-services/points-api-service.js';
 
 const AUTHORIZATION = 'Basic 48gh589hfdg49grr';
@@ -13,12 +12,8 @@ const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 const mainElement = document.querySelector('.page-main');
 const menuContainer = document.querySelector('.trip-main');
 
-const points = getPoints();
-const offersByType = getOffersByType();
-const destinations = getDestinations();
-
 const pointsModel = new PointsModel(new PointsApiService(END_POINT, AUTHORIZATION));
-pointsModel.init(points, destinations, offersByType);
+pointsModel.init();
 
 const filterModel = new FilterModel();
 

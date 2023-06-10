@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import { filtrate } from '../mock/processing.js';
+import { filtrate } from '../processing.js';
 import { FilterType, UpdateType } from '../const.js';
 import FilterView from '../view/filter-view.js';
 

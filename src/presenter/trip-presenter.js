@@ -1,6 +1,6 @@
 import { render, remove } from '../framework/render.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const';
-import { filtrate, sorting } from '../mock/processing.js';
+import { filtrate, sorting } from '../processing.js';
 import SortView  from '../view/sort-view.js';
 import TripListView  from '../view/trip-list-view.js';
 import EmptyListView  from '../view/empty-list-view.js';

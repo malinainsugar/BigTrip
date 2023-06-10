@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import { filtrate } from '../mock/processing.js';
+import { filtrate } from '../processing.js';
 import { FilterType, UpdateType } from '../const.js';
 import FilterView from '../view/filter-view.js';
 
@@ -9,7 +9,7 @@ export default class FilterPresenter {
   #pointsModel = null;
   #filtersComponent = null;
 
-  constructor(filtersContainer, filterModel, pointsModel) {
+  constructor({filtersContainer, pointsModel, filterModel}) {
     this.#filtersContainer = filtersContainer;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;

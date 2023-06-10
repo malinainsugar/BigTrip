@@ -3,9 +3,13 @@ import dayjs from 'dayjs';
 import he from 'he';
 
 
-const renderOffers = (offers, checkedOffers) => {
+const renderOffers = (allOffers, checkedOffers) => {
+  if (!allOffers) {
+    return '';
+  }
+
   let result = '';
-  offers.forEach((offer) => {
+  allOffers.offers.forEach((offer) => {
     if (checkedOffers.includes(offer.id)) {
       result = `${result}<li class="event__offer"><span class="event__offer-title">${offer.title}</span>&plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span></li>`;
     }
@@ -13,11 +17,12 @@ const renderOffers = (offers, checkedOffers) => {
   return result;
 };
 
-const createPointTemplate = (point, destinations, offers) => {
-  const { basePrice, type, destinationId, isFavorite, dateFrom, dateTo, offerIds } = point;
+const createPointTemplate = (point, destinations, allOffers) => {
+  const { basePrice, type, destination, isFavorite, dateFrom, dateTo, offers } = point;
   const getDate = (date) => dayjs(date).format('D MMMM');
   const getTime = (date) => dayjs(date).format('hh:mm');
-  const offersByType = offers.find((offer) => offer.type === type);
+  const offersByType = allOffers.find((offer) => offer.type === type);
+  const destinationData = destinations.find((item) => item.id === destination);
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -25,7 +30,7 @@ const createPointTemplate = (point, destinations, offers) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event ${type} icon">
       </div>
-      <h3 class="event__title">${type} ${he.encode(destinations[destinationId].name)}</h3>
+      <h3 class="event__title">${type} ${destinationData ? he.encode(destinationData.name) : ''}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${(getDate(dateTo) === (getDate(dateFrom)) ? getTime(dateFrom) : getDate(dateFrom))}</time>
@@ -40,7 +45,7 @@ const createPointTemplate = (point, destinations, offers) => {
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
         <li class="event__offer">
-          ${renderOffers(offersByType.offers, offerIds)}
+          ${renderOffers(offersByType, offers)}
         </li>
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">

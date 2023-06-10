@@ -11,10 +11,13 @@ const Mode = {
 export default class PointPresenter {
 
   #tripListComponent = null;
-  #pointsModel = null;
   #point = null;
   #pointComponent = null;
   #pointEditComponent = null;
+
+  #pointsModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
 
   #dataChange = null;
   #modeChange = null;
@@ -22,19 +25,20 @@ export default class PointPresenter {
 
   #destinations = null;
   #offers = null;
-  #isNewPoint = false;
 
-  constructor (tripList, points, dataChange, modeChange) {
-    this.#tripListComponent = tripList;
-    this.#pointsModel = points;
+  constructor ({pointListContainer, pointsModel, dataChange, modeChange, destinationsModel, offersModel}) {
+    this.#tripListComponent = pointListContainer;
+    this.#pointsModel = pointsModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
     this.#dataChange = dataChange;
     this.#modeChange = modeChange;
   }
 
   init = (point) => {
     this.#point = point;
-    this.#destinations = [...this.#pointsModel.destinations];
-    this.#offers = [...this.#pointsModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];
+    this.#offers = [...this.#offersModel.offers];
 
     const previousPointComponent = this.#pointComponent;
     const previousPointEditComponent = this.#pointEditComponent;
@@ -44,14 +48,14 @@ export default class PointPresenter {
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
-      isNewPoint: this.#isNewPoint
+      isNewPoint: false
     });
 
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointComponent.setEditClickHandler(this.#handleEditSubmitClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmitClick);
     this.#pointEditComponent.setCloseClickHandler(this.#handleCloseClick);
-    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
+    this.#pointEditComponent.setResetClickHandler(this.#handleResetClick);
 
     if (previousPointComponent === null || previousPointEditComponent === null) {
       render(this.#pointComponent, this.#tripListComponent);
@@ -128,7 +132,7 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#onEscKeyDown);
   }
 
-  #handleDeleteClick = () => {
+  #handleResetClick = () => {
     this.resetView();
   };
 }

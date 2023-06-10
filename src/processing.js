@@ -1,4 +1,4 @@
-import { FilterType, SortType } from '../const';
+import { FilterType, SortType } from './const';
 import dayjs from 'dayjs';
 
 const isPast = (point) => dayjs().diff(point.dateTo, 'minute') > 0;

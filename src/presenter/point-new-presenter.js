@@ -60,7 +60,7 @@ export default class PointNewPresenter {
   };
 
   #handleSaveClick = (point) => {
-    this.#changeData(UserAction.ADD_POINT, UpdateType.MINOR, point);
+    this.#changeData(UserAction.ADD_POINT, UpdateType.MAJOR, point);
   };
 
   setSaving = () => {

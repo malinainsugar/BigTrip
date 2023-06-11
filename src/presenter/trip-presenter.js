@@ -219,7 +219,7 @@ export default class TripPresenter {
     this.#pointNewPresenter = new PointNewPresenter({
       newPointContainer: this.#tripListComponent.element,
       pointsModel: this.#pointsModel,
-      dataChange: this.#handleViewAction,
+      changeData: this.#handleViewAction,
       destroyCallback: this.#handleNewPointClose,
     });
   };

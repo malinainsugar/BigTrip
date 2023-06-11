@@ -15,26 +15,39 @@ const BLANK_POINT = {
   type: TYPES_POINT[0],
 };
 
-const renderPictures = (pictures) => pictures.length === 0 ? '' :
-  pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
+const renderPictures = (pictures) => pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
 
 const renderNames = (destinations) => destinations.length === 0 ? '' :
   destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 
-const renderOffers = (offers, checkedOffers, isDisabled) => {
-  let result = '';
-  offers.forEach((offer) => {
-    result = `${result}<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" 
-        type="checkbox" name="event-offer-luggage" ${checkedOffers.includes(offer.id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
-      <label class="event__offer-label" for="event-offer-${offer.id}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>`;
-  });
-  return result;
+const renderOffers = (offers, isDisabled) => {
+  if (offers.length === 0) {
+    return `
+    <section class="event__section  event__section--offers">
+      <div class="event__available-offers">
+      </div>
+    </section>`;
+  }
+  const offersTemplate = offers
+    .map((offer) => `
+      <div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" 
+        id="event-offer-${offer.title}-1" type="checkbox" 
+        name="event-offer-${offer.title}" ${offer.isChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+        <label class="event__offer-label" for="event-offer-${offer.title}" data-name="${offer.id}">
+          <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+        </div>`
+    ).join('');
+  return `
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${offersTemplate}
+      </div>
+    </section>`;
 };
 
 const renderDate = (dateFrom, dateTo, isDisabled) => (
@@ -52,9 +65,8 @@ const renderType = (currentType, isDisabled) => TYPES_POINT.map((type) => `<div 
   <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type[0].toUpperCase() + type.slice(1)}</label></div>`)
   .join('');
 
-const createPointEditTemplate = (point, destinations, allOffers) => {
+const createPointEditTemplate = (point, destinations) => {
   const { basePrice, type, destination, dateFrom, dateTo, offers, isDisabled, isSaving, isDeleting, id } = point;
-  const offersByType = allOffers.find((offer) => offer.type === type);
 
   const deleteButton = isDeleting ? 'Deleting...' : 'Delete';
   const rollUpButton =
@@ -104,12 +116,7 @@ const createPointEditTemplate = (point, destinations, allOffers) => {
         ${id ? rollUpButton : ''}
     </header>
     <section class="event__details">
-      <section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">'Offers'</h3>
-        <div class="event__available-offers">
-          ${renderOffers(offersByType.offers, offers, isDisabled)}
-        </div>
-      </section>
+    ${renderOffers(offers)}
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">'Destination'</h3>
         <p class="event__destination-description">${destination.description}</p>
@@ -149,16 +156,12 @@ export default class PointEditView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPointEditTemplate(this._state, this.#destinations, this.#offersByType);
+    return createPointEditTemplate(this._state, this.#destinations);
   }
 
   static parsePointToState = (point, offersByType, destinations) => ({
     ...point,
-    offers: offersByType
-      .find((offer) => offer.type === point.type)
-      .offers.map((offer) => ({
-        ...offer,
-        isChecked: point.offers.includes(offer.id),})),
+    offers: offersByType.find((offer) => offer.type === point.type).offers.map((offer) => ({...offer, isChecked: point.offers.includes(offer.id),})),
     destination: destinations.find((destination) => destination.id === point.destination),
     dateTo: dayjs(point.dateTo).toDate(),
     dateFrom: dayjs(point.dateFrom).toDate(),
@@ -189,7 +192,7 @@ export default class PointEditView extends AbstractStatefulView {
     const chosenDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (chosenDestination) {
       this.updateElement({
-        destination: chosenDestination.id,
+        destination: chosenDestination,
       });
     }
   };
@@ -198,14 +201,16 @@ export default class PointEditView extends AbstractStatefulView {
     if (evt.target.tagName === 'DIV') {
       return;
     }
+
     let offerId = evt.target.dataset.name;
     if (!offerId) {
       offerId = evt.target.parentNode.dataset.name;
     }
-    offerId = parseInt(offerId, 10);
 
-    const offers = this._state.offers.filter((offer) => offer.id === offerId);
-    offers.isChecked = !offers.isChecked;
+    offerId = parseInt(offerId, 10);
+    const checkedOffer = this._state.offers.find((offer) => offer.id === offerId);
+
+    checkedOffer.isChecked = !checkedOffer.isChecked;
 
     this.updateElement({
       offers: [...this._state.offers],

@@ -1,3 +1,6 @@
+const AUTHORIZATION = 'Basic 48gh589hfdg49grr';
+const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
+
 const TYPES_POINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const FilterType = {
@@ -38,6 +41,8 @@ const SORT_TYPES_DISABLED = ['event', 'offers'];
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
 };
 
 const SortTypeDescription = {
@@ -48,6 +53,11 @@ const SortTypeDescription = {
   [SortType.OFFERS]: 'Offer',
 };
 
-export {TYPES_POINT, FilterType, SortType, UserAction, UpdateType,
-  EmptyListTextType, SORT_TYPES_DISABLED, Method, SortTypeDescription};
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export {TYPES_POINT, FilterType, SortType, UserAction, UpdateType, TimeLimit,
+  EmptyListTextType, SORT_TYPES_DISABLED, Method, SortTypeDescription, AUTHORIZATION, END_POINT};
 

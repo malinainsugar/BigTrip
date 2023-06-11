@@ -15,7 +15,6 @@ export default class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
 
-  #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
 
@@ -26,9 +25,8 @@ export default class PointPresenter {
   #destinations = null;
   #offers = null;
 
-  constructor ({pointListContainer, pointsModel, dataChange, modeChange, destinationsModel, offersModel}) {
+  constructor ({pointListContainer, dataChange, modeChange, destinationsModel, offersModel}) {
     this.#tripListComponent = pointListContainer;
-    this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#dataChange = dataChange;
@@ -68,6 +66,7 @@ export default class PointPresenter {
         break;
       case Mode.EDITING:
         replace(this.#pointComponent, previousPointComponent);
+        this.#mode = Mode.PREVIEW;
         break;
     }
 
@@ -121,7 +120,6 @@ export default class PointPresenter {
   };
 
   #handleFormSubmitClick = () => {
-    this.#replaceFormToPoint();
     this.#dataChange(UserAction.UPDATE_POINT, UpdateType.MINOR, this.#point);
     document.removeEventListener('keydown', this.#onEscKeyDown);
   }
@@ -134,6 +132,41 @@ export default class PointPresenter {
 
   #handleResetClick = () => {
     this.resetView();
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.PREVIEW) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    this.#pointEditComponent.shake(this.#resetFormState);
+  };
+
+  #resetFormState = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
   };
 }
 

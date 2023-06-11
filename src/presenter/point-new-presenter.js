@@ -1,7 +1,6 @@
 import { RenderPosition, remove, render } from '../framework/render';
 import { UpdateType, UserAction } from '../const';
 import PointEditView from '../view/point-edit-view';
-import { nanoid } from 'nanoid';
 
 export default class PointNewPresenter {
   #pointListContainer = null;
@@ -9,18 +8,16 @@ export default class PointNewPresenter {
   #changeData = null;
   #destroyCallback = null;
 
-  #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
 
   #destinations = null;
   #offers = null;
 
-  constructor({pointListContainer, changeData, pointsModel, destinationsModel, offersModel}) {
+  constructor({pointListContainer, changeData, destinationsModel, offersModel}) {
     this.#pointListContainer = pointListContainer;
     this.#changeData = changeData;
 
-    this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
   }
@@ -77,9 +74,27 @@ export default class PointNewPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point,
     );
-    this.destroy();
+  };
+
+  setSaving = () => {
+    this.#creatingPointComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    this.#creatingPointComponent.shake(this.#resetFormState);
+  };
+
+  #resetFormState = () => {
+    this.#creatingPointComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
   };
 }
 

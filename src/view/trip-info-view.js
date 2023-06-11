@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import { sorting } from '../processing.js';
+import { sorting } from '../utils.js';
 import { SortType } from '../const.js';
 
 const renderTripTitleInfo = (points, destinations) => {

@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { getDateAndTime, isFirstDateBeforeSecond } from '../utils.js';
+import { getDateAndTime } from '../utils.js';
 import { TYPES_POINT } from '../const.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
@@ -17,8 +17,7 @@ const BLANK_POINT = {
 
 const renderPictures = (pictures) => pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
 
-const renderNames = (destinations) => destinations.length === 0 ? '' :
-  destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
+const renderNames = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 
 const renderOffers = (offers, isDisabled) => {
   if (offers.length === 0) {
@@ -224,8 +223,23 @@ export default class PointEditView extends AbstractStatefulView {
     });
   };
 
-  reset = (point) => {
-    this.updateElement(PointEditView.parsePointToState(point, this.#offersByType, this.#destinations));
+  #saveClickHandler = (evt) => {
+    evt.preventDefault();
+    if (this._state.basePrice > 0 && getDateAndTime(this._state.dateFrom, this._state.dateTo)) {
+      this.#saveClick(PointEditView.parseStateToPoint(this._state));
+    } else {
+      this.shake();
+    }
+  };
+
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#deleteClick(PointEditView.parseStateToPoint(this._state));
+  };
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#closeClick();
   };
 
   _restoreHandlers = () => {
@@ -240,14 +254,15 @@ export default class PointEditView extends AbstractStatefulView {
     this.#setDatepickerTo();
   };
 
-  checkQuerySelector(event, action, handler) {
+  reset = (point) => this.updateElement(PointEditView.parsePointToState(point, this.#offersByType, this.#destinations));
+
+  checkQuerySelector = (event, action, handler) => {
     const elem = this.element.querySelector(event);
     if (!elem){
       return;
     }
     return elem.addEventListener(action, handler);
   }
-
 
   removeElement = () => {
     super.removeElement();
@@ -297,23 +312,4 @@ export default class PointEditView extends AbstractStatefulView {
       },
     );
   }
-
-  #saveClickHandler = (evt) => {
-    evt.preventDefault();
-    if (this._state.basePrice > 0 && isFirstDateBeforeSecond(this._state.dateFrom, this._state.dateTo)) {
-      this.#saveClick(PointEditView.parseStateToPoint(this._state));
-    } else {
-      this.shake();
-    }
-  };
-
-  #deleteClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#deleteClick(PointEditView.parseStateToPoint(this._state));
-  };
-
-  #closeClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#closeClick();
-  };
 }

@@ -14,12 +14,12 @@ ${Object.values(SortType).map((sortType) => `<div class="trip-sort__item  trip-s
 
 export default class SortView extends AbstractView {
   #isChecked = null;
-  #sortButtonClick = null;
+  #buttonClick = null;
 
-  constructor(isChecked, sortButtonClick) {
+  constructor(isChecked, buttonClick) {
     super();
     this.#isChecked = isChecked;
-    this.#sortButtonClick = sortButtonClick;
+    this.#buttonClick = buttonClick;
     this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
 
@@ -32,7 +32,7 @@ export default class SortView extends AbstractView {
       return;
     }
 
-    this.#sortButtonClick(evt.target.dataset.sortType);
+    this.#buttonClick(evt.target.dataset.sortType);
   };
 }
 

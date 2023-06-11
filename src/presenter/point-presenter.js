@@ -11,7 +11,6 @@ const Mode = {
 export default class PointPresenter {
 
   #tripListComponent = null;
-
   #point = null;
   #pointComponent = null;
   #pointEditComponent = null;
@@ -107,28 +106,6 @@ export default class PointPresenter {
     }
   }
 
-  #handleEditClick = () => {
-    this.#replacePointToForm();
-  };
-
-
-  #handleFavoriteClick = () => {
-    this.#dataChange(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      {...this.#point, isFavorite: !this.#point.isFavorite});
-  };
-
-  #handleSaveForm = (update) => {
-    this.#dataChange(UserAction.UPDATE_POINT, UpdateType.MAJOR, update);
-    this.#replaceFormToPoint();
-  };
-
-  #handleCloseForm = () => {
-    this.#pointEditComponent.reset(this.#point);
-    this.#replaceFormToPoint();
-  }
-
   setSaving = () => {
     if (this.#mode === Mode.EDITING) {
       this.#pointEditComponent.updateElement({
@@ -159,8 +136,25 @@ export default class PointPresenter {
     this.#pointEditComponent.shake(resetFromState);
   };
 
-  #handleDeletePoint = (point) => {
-    this.#dataChange(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
+  #handleDeletePoint = (point) => this.#dataChange(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
+
+  #handleEditClick = () => this.#replacePointToForm();
+
+  #handleFavoriteClick = () => {
+    this.#dataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   };
+
+  #handleSaveForm = (update) => {
+    this.#dataChange(UserAction.UPDATE_POINT, UpdateType.MAJOR, update);
+    this.#replaceFormToPoint();
+  };
+
+  #handleCloseForm = () => {
+    this.#pointEditComponent.reset(this.#point);
+    this.#replaceFormToPoint();
+  }
 }
 

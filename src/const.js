@@ -48,10 +48,5 @@ const SortTypeDescription = {
   [SortType.OFFERS]: 'Offer',
 };
 
-const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
-};
-
-export {TYPES_POINT, FilterType, SortType, UserAction, UpdateType, TimeLimit, EmptyListTextType, Method, SortTypeDescription};
+export {TYPES_POINT, FilterType, SortType, UserAction, UpdateType, EmptyListTextType, Method, SortTypeDescription};
 

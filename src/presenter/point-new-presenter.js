@@ -55,13 +55,9 @@ export default class PointNewPresenter {
     }
   };
 
-  #handleCloseClick = () => {
-    this.destroy();
-  };
+  #handleCloseClick = () => this.destroy();
 
-  #handleSaveClick = (point) => {
-    this.#changeData(UserAction.ADD_POINT, UpdateType.MAJOR, point);
-  };
+  #handleSaveClick = (point) => this.#changeData(UserAction.ADD_POINT, UpdateType.MAJOR, point);
 
   setSaving = () => {
     this.#newPointComponent.updateElement({

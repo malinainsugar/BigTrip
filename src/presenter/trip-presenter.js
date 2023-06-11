@@ -1,6 +1,6 @@
 import { RenderPosition, render, remove } from '../framework/render.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const';
-import { filtrate, sorting } from '../processing.js';
+import { filtrate, sorting } from '../utils.js';
 import SortView  from '../view/sort-view.js';
 import TripListView  from '../view/trip-list-view.js';
 import EmptyListView  from '../view/empty-list-view.js';
@@ -45,9 +45,7 @@ export default class TripPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  init() {
-    this.#renderTripList();
-  }
+  init = () => this.#renderTripList();
 
   get points() {
     const filterType = this.#filterModel.filter;
@@ -116,26 +114,6 @@ export default class TripPresenter {
     }
   };
 
-  #renderInfo = () => {
-    if (this.#infoComponent === null) {
-      this.#infoComponent = new TripInfoView(this.#pointsModel.points, this.destinations, this.offers);
-    }
-    render(this.#infoComponent, this.#menuContainer, RenderPosition.AFTERBEGIN);
-  };
-
-  createPoint = () => {
-    this.#currentSortType = SortType.DAY;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    remove(this.#emptyListComponent);
-    this.#pointNewPresenter.init();
-  };
-
-  #handleModeChange = () => {
-    this.#pointPresenter.forEach((presenter) => presenter.resetView());
-  };
-
-  #renderFirstMessage = () => render(this.#emptyListComponent, this.#tripContainer);
-
   #handleSortTypeChange = (sortType) => {
     if (sortType === this.#currentSortType){
       return;
@@ -145,6 +123,38 @@ export default class TripPresenter {
     this.#clearTripList();
     this.#renderTripList();
   }
+
+  #handleModeChange = () => this.#pointPresenter.forEach((presenter) => presenter.resetView());
+
+  #handleNewPointButtonClick = () => {
+    this.createPoint();
+    this.#newPointButtonComponent.element.disabled = true;
+  };
+
+  #handleNewPointClose = () => {
+    if (this.points.length === 0) {
+      this.#renderFirstMessage();
+    }
+    this.#newPointButtonComponent.element.disabled = false;
+  };
+
+  createPoint = () => {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    remove(this.#emptyListComponent);
+    this.#pointNewPresenter.init();
+  };
+
+  #createNewPointPresenter = () => {
+    this.#pointNewPresenter = new PointNewPresenter({
+      newPointContainer: this.#tripListComponent.element,
+      pointsModel: this.#pointsModel,
+      changeData: this.#handleViewAction,
+      destroyCallback: this.#handleNewPointClose,
+    });
+  };
+
+  #renderFirstMessage = () => render(this.#emptyListComponent, this.#tripContainer);
 
   #renderNewPointButton = (isDisabled) => {
     if (this.#newPointButtonComponent === null) {
@@ -161,16 +171,18 @@ export default class TripPresenter {
     render(this.#sortComponent, this.#tripContainer,  RenderPosition.AFTERBEGIN);
   }
 
+  #renderLoading = () => render(this.#loadingComponent, this.#tripContainer);
 
-  #renderLoading = () => {
-    render(this.#loadingComponent, this.#tripContainer);
+  #renderError = () => render(this.#errorComponent, this.#tripContainer);
+
+  #renderInfo = () => {
+    if (this.#infoComponent === null) {
+      this.#infoComponent = new TripInfoView(this.#pointsModel.points, this.destinations, this.offers);
+    }
+    render(this.#infoComponent, this.#menuContainer, RenderPosition.AFTERBEGIN);
   };
 
-  #renderError = () => {
-    render(this.#errorComponent, this.#tripContainer);
-  };
-
-  #renderTripList() {
+  #renderTripList = () => {
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -189,7 +201,7 @@ export default class TripPresenter {
     }
   }
 
-  #renderPoint(point) {
+  #renderPoint = (point) => {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#tripListComponent.element,
       dataChange: this.#handleViewAction,
@@ -214,27 +226,5 @@ export default class TripPresenter {
     remove(this.#infoComponent);
     this.#infoComponent = null;
   };
-
-  #createNewPointPresenter = () => {
-    this.#pointNewPresenter = new PointNewPresenter({
-      newPointContainer: this.#tripListComponent.element,
-      pointsModel: this.#pointsModel,
-      changeData: this.#handleViewAction,
-      destroyCallback: this.#handleNewPointClose,
-    });
-  };
-
-  #handleNewPointButtonClick = () => {
-    this.createPoint();
-    this.#newPointButtonComponent.element.disabled = true;
-  };
-
-  #handleNewPointClose = () => {
-    if (this.points.length === 0) {
-      this.#renderFirstMessage();
-    }
-    this.#newPointButtonComponent.element.disabled = false;
-  };
-
 }
 

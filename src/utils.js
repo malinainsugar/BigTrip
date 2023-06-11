@@ -1,33 +1,27 @@
+import { FilterType, SortType } from './const';
 import dayjs from 'dayjs';
 
-const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min) + min);
+const getDateAndTime = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom)) > 0;
 
-const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)];
-
-const getDateAndTime = (date) => dayjs(date).format('DD/MM/YY hh:mm');
-
-const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
-
-const isFirstDateBeforeSecond = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom)) > 0;
-
-const getRandomDate = () => dayjs()
-  .add(getRandomInt(-7, 7), 'day')
-  .add(getRandomInt(1, 23), 'hour')
-  .add(getRandomInt(1, 59), 'minute');
-
-const createRandomDates = () => {
-  const oneDate = getRandomDate();
-  const secondDate = getRandomDate();
-  if (oneDate.isBefore(secondDate)) {
-    return {
-      dateFrom: oneDate.toISOString(),
-      dateTo: secondDate.toISOString()
-    };
-  }
-  return {
-    dateFrom: secondDate.toISOString(),
-    dateTo: oneDate.toISOString()
-  };
+const filtrate = {
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => dayjs().diff(point.dateFrom, 'minute') <= 0),
+  [FilterType.PAST]: (points) => points.filter((point) => dayjs().diff(point.dateTo, 'minute') > 0)
 };
 
-export {getRandomArrayElement, getRandomInt, getDateAndTime, createRandomDates, updateItem, isFirstDateBeforeSecond};
+const generateFilter = (points) => Object.entries(filtrate).map(
+  ([filterName, filterPoints]) => ({
+    name: filterName,
+    count: filterPoints(points).length,
+  }),
+);
+
+const getDifference = (oneDate, secondDate) => dayjs(secondDate).diff(oneDate);
+
+const sorting = {
+  [SortType.DAY]: (points) => points.sort((pointA, pointB) => getDifference(pointB.dateFrom, pointA.dateFrom)),
+  [SortType.TIME]: (points) => points.sort((pointA, pointB) => getDifference(pointA.dateFrom, pointA.dateTo) - getDifference(pointB.dateFrom, pointB.dateTo)),
+  [SortType.PRICE]: (points) => points.sort((pointA, pointB) => pointA.basePrice - pointB.basePrice)
+};
+
+export { getDateAndTime, generateFilter, filtrate, sorting };

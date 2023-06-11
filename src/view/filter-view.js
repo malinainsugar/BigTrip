@@ -25,25 +25,25 @@ const createFiltersTemplate = (filterItems, isChecked) => {
 export default class FilterView extends AbstractView {
   #filters = null;
   #isChecked = null;
+  #filterChange = null;
 
-  constructor(filters, isChecked) {
+  constructor(filters, isChecked, filterChange) {
     super();
     this.#filters = filters;
     this.#isChecked = isChecked;
+    this.#filterChange = filterChange;
+
+    this.element.addEventListener('click', this.#filterChangeHandler);
   }
 
   get template() {
     return createFiltersTemplate(this.#filters, this.#isChecked);
   }
 
-  setFilterChangeHandler = (callback) => {
-    this._callback.filterTypeChange = callback;
-    this.element.addEventListener('change', this.#filterChangeHandler);
-  };
-
   #filterChangeHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
+    if (evt.target.tagName === 'LABEL' && evt.target.dataset.disabled === 'false') {
+      this.#filterChange(evt.target.dataset.name);
+    }
   };
 }
 

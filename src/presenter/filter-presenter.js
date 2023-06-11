@@ -5,9 +5,10 @@ import FilterView from '../view/filter-view.js';
 
 export default class FilterPresenter {
   #filtersContainer = null;
+  #filtersComponent = null;
+
   #filterModel = null;
   #pointsModel = null;
-  #filtersComponent = null;
 
   constructor({filtersContainer, pointsModel, filterModel}) {
     this.#filtersContainer = filtersContainer;
@@ -42,8 +43,7 @@ export default class FilterPresenter {
 
   init() {
     const previousFilterComponent = this.#filtersComponent;
-    this.#filtersComponent = new FilterView(this.filters, this.#filterModel.filter);
-    this.#filtersComponent.setFilterChangeHandler(this.#handleFilterClick);
+    this.#filtersComponent = new FilterView(this.filters, this.#filterModel.filter, this.#handleFilterClick);
 
 
     if (!previousFilterComponent) {

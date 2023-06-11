@@ -41,7 +41,6 @@
     "dayjs": "1.11.7",
     "flatpickr": "4.6.13",
     "he": "1.2.0",
-    "nanoid": "4.0.2",
     "chartjs-plugin-datalabels": "0.7.0"
   }
 }

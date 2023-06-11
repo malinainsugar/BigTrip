@@ -1,71 +1,50 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getDateAndTime } from '../utils.js';
+import dayjs from 'dayjs';
+import { sorting } from '../processing.js';
+import { SortType } from '../const.js';
 
-const renderRouteTrip = (points, destinations) => {
-  if (points.length === 0) {
-    return '';
-  }
-  const routeWithoutRepeats = [points[0].destination];
-  for (let i = 1; i < points.length; i++) {
-    if (points[i].destination !== points[i - 1].destination) {
-      routeWithoutRepeats.push(points[i].destination);
+const renderTripTitleInfo = (points, destinations) => {
+  const destinationsOrder = [];
+  for (const point of points) {
+    const destinationName = destinations.find((destination) => destination.id === point.destination).name;
+    if (destinationsOrder.length === 0 || destinationName !== destinationsOrder[destinationsOrder.length - 1]) {
+      destinationsOrder.push(destinationName);
     }
   }
 
-  if (routeWithoutRepeats.length > 3) {
-    const startPoint = destinations.find((item) => item.id === routeWithoutRepeats[0]);
-    const endPoint = destinations.find((item) => item.id === routeWithoutRepeats[routeWithoutRepeats.length - 1]);
-    return `${startPoint.name} &mdash; ... &mdash; ${endPoint.name}`;
+  if (destinationsOrder.length === 1) {
+    return destinationsOrder[0];
+  } else if (destinationsOrder.length > 3) {
+    return `${destinationsOrder[0]} &mdash;...&mdash; ${destinationsOrder[destinationsOrder.length - 1]}`;
   }
-
-  return routeWithoutRepeats.map((destination) => `${destinations.find((item) => item.id === destination).name}`).join(' &mdash; ');
-
-};
-const renderDatesTrip = (points) => {
-  if (points.length === 0) {
-    return '';
-  }
-  const startDate = points[0].dateFrom !== null ? getDateAndTime(points[0].dateFrom) : '';
-  const endDate = points[points.length - 1].dateTo !== null ? getDateAndTime(points[points.length - 1].dateTo) : '';
-  return `${startDate}&nbsp;&mdash;&nbsp;${endDate}`;
+  return destinationsOrder.join(' &mdash; ');
 };
 
-const getPricePointOffers = (point, offers) => {
-  if (offers.length === 0) {
-    return 0;
-  }
-  let pricePointOffers = 0;
-  const offersByType = offers.find((offer) => offer.type === point.type);
-  const pointOffers = point.offers;
-  pointOffers.forEach((offer) => {
-    pricePointOffers += offersByType.offers.find((item) => item.id === offer).price;
-  });
-  return pricePointOffers;
+const renderDatesTrip = (points) => `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format('MMM D')}`;
+
+const renderTotalPriceTrip = (point, offersByType) => {
+  const offers = offersByType.find((offerByType) => offerByType.type === point.type).offers;
+  const offersPrice = point.offers.reduce((currentValue, offer) => offers.find((off) => off.id === offer).price + currentValue, 0);
+  return offersPrice + point.basePrice;
 };
 
-const renderTotalPriceTrip = (points, offers) => {
-  if (points.length === 0) {
-    return '';
-  }
-  let totalPrice = 0;
-  points.forEach((point) => {
-    totalPrice += point.basePrice;
-    totalPrice += getPricePointOffers(point, offers);
-  });
-  return `Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>`;
-};
+const createTripInfoTemplate = (points, destinations, offersByType) => {
+  const summaryPrice = points.reduce((currentValue, point) => renderTotalPriceTrip(point, offersByType) + currentValue, 0);
+  const tripInfoTitle = renderTripTitleInfo(points, destinations);
+  const datesInfo = renderDatesTrip(points);
 
-const createTripInfoTemplate = (points, destinations, offers) => {
-  if (destinations.length === 0 || offers.length === 0) {
-    return '';
-  }
-  return `<div class="trip-info"><div class="trip-info__main">
-  <h1 class="trip-info__title">${renderRouteTrip(points, destinations)}</h1>
-  <p class="trip-info__dates">${renderDatesTrip(points)}</p>
-</div>
-<p class="trip-info__cost">
-  ${renderTotalPriceTrip(points, offers)}
-</p></div>`;
+  return `
+  <section class="trip-main__trip-info  trip-info">
+    <div class="trip-info__main">
+      <h1 class="trip-info__title">${tripInfoTitle}</h1>
+
+      <p class="trip-info__dates">${datesInfo}</p>
+    </div>
+
+    <p class="trip-info__cost">
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${summaryPrice}</span>
+    </p>
+  </section>`;
 };
 
 export default class TripInfoView extends AbstractView {
@@ -75,7 +54,7 @@ export default class TripInfoView extends AbstractView {
 
   constructor(points, destinations, offers) {
     super();
-    this.#points = points;
+    this.#points = sorting[SortType.DAY](points);
     this.#destinations = destinations;
     this.#offers = offers;
   }

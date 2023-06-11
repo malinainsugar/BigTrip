@@ -3,60 +3,49 @@ import { UpdateType, UserAction } from '../const';
 import PointEditView from '../view/point-edit-view';
 
 export default class PointNewPresenter {
-  #pointListContainer = null;
-  #creatingPointComponent = null;
+  #newPointContainer = null;
+  #newPointComponent = null;
+
   #changeData = null;
   #destroyCallback = null;
-
-  #destinationsModel = null;
-  #offersModel = null;
 
   #destinations = null;
   #offers = null;
 
-  constructor({pointListContainer, changeData, destinationsModel, offersModel}) {
-    this.#pointListContainer = pointListContainer;
+  constructor({newPointContainer, changeData, pointsModel, destroyCallback}) {
+    this.#newPointContainer = newPointContainer;
     this.#changeData = changeData;
-
-    this.#destinationsModel = destinationsModel;
-    this.#offersModel = offersModel;
+    this.#destinations = pointsModel.destinations;
+    this.#offers = pointsModel.offers;
+    this.#destroyCallback = destroyCallback;
   }
 
-  init = (callback) => {
-    this.#destroyCallback = callback;
+  init = () => {
 
-    if (this.#creatingPointComponent !== null) {
+    if (this.#newPointComponent !== null) {
       return;
     }
 
-    this.#destinations = [...this.#destinationsModel.destinations];
-    this.#offers = [...this.#offersModel.offers];
-
-    this.#creatingPointComponent = new PointEditView({
-      destination: this.#destinations,
-      offers: this.#offers,
-      isNewPoint: true
+    this.#newPointComponent = new PointEditView({
+      destinations: this.#destinations,
+      offersByType: this.#offers,
+      saveClick: this.#handleSaveClick,
+      deleteClick: this.#handleCloseClick,
+      closeClick: this.#handleCloseClick,
     });
 
-    this.#creatingPointComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    this.#creatingPointComponent.setResetClickHandler(this.#handleResetClick);
-
-    render(this.#creatingPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
-
+    render(this.#newPointComponent, this.#newPointContainer, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   destroy = () => {
-    if (this.#creatingPointComponent === null) {
+    if (this.#newPointComponent === null) {
       return;
     }
 
-    this.#destroyCallback?.();
-
-    remove(this.#creatingPointComponent);
-    this.#creatingPointComponent = null;
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#destroyCallback();
+    remove(this.#newPointComponent);
+    this.#newPointComponent = null;
   };
 
   #escKeyDownHandler = (evt) => {
@@ -66,35 +55,31 @@ export default class PointNewPresenter {
     }
   };
 
-  #handleResetClick = () => {
+  #handleCloseClick = () => {
     this.destroy();
   };
 
-  #handleFormSubmit = (point) => {
-    this.#changeData(
-      UserAction.ADD_POINT,
-      UpdateType.MINOR,
-      point,
-    );
+  #handleSaveClick = (point) => {
+    this.#changeData(UserAction.ADD_POINT, UpdateType.MINOR, point);
   };
 
   setSaving = () => {
-    this.#creatingPointComponent.updateElement({
+    this.#newPointComponent.updateElement({
       isDisabled: true,
       isSaving: true,
     });
   };
 
   setAborting = () => {
-    this.#creatingPointComponent.shake(this.#resetFormState);
+    const resetFromState = () => {
+      this.#newPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+      });
+    };
+
+    this.#newPointComponent.shake(resetFromState);
   };
 
-  #resetFormState = () => {
-    this.#creatingPointComponent.updateElement({
-      isDisabled: false,
-      isSaving: false,
-      isDeleting: false,
-    });
-  };
 }
 
